@@ -1,5 +1,6 @@
 HORSE SHOP FOR REDEM 0.1v by #mrlupo# / #Proky# / #Plouffe#  
-
+https://github.com/Proky0
+https://github.com/mrlupo
 
 Info :
 This script will add a horse you buy into a database and when you buy a new horse it will update and replace the old one.
