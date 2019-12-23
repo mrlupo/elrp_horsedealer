@@ -215,7 +215,8 @@ AddEventHandler( 'elrp:spawnHorse', function ( horse )
 
 	SET_PED_RELATIONSHIP_GROUP_HASH( horseModel, model )
 	SET_PED_DEFAULT_OUTFIT( horseModel )
-
+	Citizen.InvokeNative(0x23f74c2fda6e7c61, -1230993421, horseModel)
+	
 	horseSpawn[idOfTheHorse] = { id = idOfTheHorse, model = horseModel }
 
 end )
