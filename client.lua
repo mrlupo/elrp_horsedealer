@@ -9,61 +9,63 @@ local horseModel;
 local horseSpawn = {}
 local NumberHorseSpawn = 0
 
+local CurrentZoneActive = 0
+
 local Horses = {
-	[1] = {
-		['Text'] = "$20 Tennesseewalker Chestnut level require [0]",
+	{
+		['Text'] = "$20 - Tennesseewalker Chestnut",
 		['SubText'] = "",
-		['Desc'] = "level require [0]",
+		['Desc'] = "Level Require : ~pa~0",
 		['Param'] = {
 			['Price'] = 20,
 			['Model'] = "A_C_HORSE_TENNESSEEWALKER_CHESTNUT",
 			['Level'] = 0
 		}
 	},
-	[2] = {
-		['Text'] = "$35 SHIRE RAVENBLACK level require [3]",
+	{
+		['Text'] = "$35 - SHIRE RAVENBLACK",
 		['SubText'] = "",
-		['Desc'] = "level require [0]",
+		['Desc'] = "Level Require : ~pa~3",
 		['Param'] = {
 			['Price'] = 35,
 			['Model'] = "A_C_HORSE_SHIRE_RAVENBLACK",
 			['Level'] = 0
 		}
 	},
-	[3] = {
-		['Text'] = "$45 APPALOOSA LEOPARD level require [6]",
+	{
+		['Text'] = "$45 - APPALOOSA LEOPARD",
 		['SubText'] = "",
-		['Desc'] = "level require [0]",
+		['Desc'] = "Level Require : ~pa~6",
 		['Param'] = {
 			['Price'] = 35,
 			['Model'] = "A_C_HORSE_APPALOOSA_LEOPARD",
 			['Level'] = 6
 		}
 	},
-	[4] = {
-		['Text'] = "$60 Mr Bill W level require [9]",
+	{
+		['Text'] = "$60 - Mr Bill W",
 		['SubText'] = "",
-		['Desc'] = "level require [9]",
+		['Desc'] = "Level Require : ~pa~9",
 		['Param'] = {
 			['Price'] = 60,
 			['Model'] = "A_C_HORSE_GANG_BILL",
 			['Level'] = 9
 		}
 	},
-	[5] = {
-		['Text'] = "$70 Kentuckysaddle Black level require [13]",
+	{
+		['Text'] = "$70 - Kentuckysaddle Black",
 		['SubText'] = "",
-		['Desc'] = "level require [5]",
+		['Desc'] = "Level Require : ~pa~13",
 		['Param'] = {
 			['Price'] = 70,
 			['Model'] = "A_C_HORSE_KENTUCKYSADDLE_BLACK",
 			['Level'] = 13
 		},
 	},
-	[6] = {
-		['Text'] = "$150 THOROUGHBRED BRINDLE level require [16]",
+	{
+		['Text'] = "$150 - THOROUGHBRED BRINDLE",
 		['SubText'] = "",
-		['Desc'] = "level require [9]",
+		['Desc'] = "Level Require : ~pa~16",
 		['Param'] = {
 			['Price'] = 150,
 			['Model'] = "A_C_HORSE_THOROUGHBRED_BRINDLE",
@@ -78,14 +80,37 @@ local function CreateBlips ( )
 	end
 end
 
+local function GiveAllAttitude( entity )
+    -- | SET_ATTRIBUTE_POINTS | --
+    Citizen.InvokeNative( 0x09A59688C26D88DF, entity, 0, 1100 )
+    Citizen.InvokeNative( 0x09A59688C26D88DF, entity, 1, 1100 )
+    Citizen.InvokeNative( 0x09A59688C26D88DF, entity, 2, 1100 )
+    -- | ADD_ATTRIBUTE_POINTS | --
+    Citizen.InvokeNative( 0x75415EE0CB583760, entity, 0, 1100 )
+    Citizen.InvokeNative( 0x75415EE0CB583760, entity, 1, 1100 )
+    Citizen.InvokeNative( 0x75415EE0CB583760, entity, 2, 1100 )
+    -- | SET_ATTRIBUTE_BASE_RANK | --
+    Citizen.InvokeNative( 0x5DA12E025D47D4E5, entity, 0, 10 )
+    Citizen.InvokeNative( 0x5DA12E025D47D4E5, entity, 1, 10 )
+    Citizen.InvokeNative( 0x5DA12E025D47D4E5, entity, 2, 10 )
+    -- | SET_ATTRIBUTE_BONUS_RANK | --
+    Citizen.InvokeNative( 0x920F9488BD115EFB, entity, 0, 10 )
+    Citizen.InvokeNative( 0x920F9488BD115EFB, entity, 1, 10 )
+    Citizen.InvokeNative( 0x920F9488BD115EFB, entity, 2, 10 )
+    -- | SET_ATTRIBUTE_OVERPOWER_AMOUNT | --
+    Citizen.InvokeNative( 0xF6A7C08DF2E28B28, entity, 0, 5000.0, false )
+    Citizen.InvokeNative( 0xF6A7C08DF2E28B28, entity, 1, 5000.0, false )
+    Citizen.InvokeNative( 0xF6A7C08DF2E28B28, entity, 2, 5000.0, false )
+end
+
 local function IsNearZone ( location )
 
 	local player = PlayerPedId()
 	local playerloc = GetEntityCoords(player, 0)
 
-	for i=1,#location do
+	for i = 1, #location do
 		if #(playerloc - location[i]) < 1.0 then
-			return true
+			return true, i
 		end
 	end
 
@@ -121,26 +146,30 @@ end
 
 Citizen.CreateThread( function()
 	WarMenu.CreateMenu('id_Horse', 'Shop Horses')
-	while true do
+	repeat
 		if WarMenu.IsMenuOpened('id_Horse') then
 			for i = 1, #Horses do
-				if WarMenu.Button(Horses[i]['Text'], Horses[i]['SubText']) then
+				if WarMenu.Button(Horses[i]['Text'], Horses[i]['SubText'], Horses[i]['Desc']) then
 					TriggerServerEvent('elrp:buyhorse', Horses[i]['Param'])
+					WarMenu.CloseMenu()
 				end
 			end
 			WarMenu.Display()
 		end
 		Citizen.Wait(0)
-	end
+	until false
 end)
 
 Citizen.CreateThread(function()
 	while true do
 
-		if IsNearZone( Config.Coords ) then
+		local IsZone, IdZone = IsNearZone( Config.Coords )
+
+		if IsZone then
 			DisplayHelp(Config.Shoptext, 0.50, 0.95, 0.6, 0.6, true, 255, 255, 255, 255, true, 10000)
 			if IsControlJustReleased(0, keys['E']) then
 				WarMenu.OpenMenu('id_Horse')
+				CurrentZoneActive = IdZone
 			end
 		end
 
@@ -149,11 +178,11 @@ Citizen.CreateThread(function()
 			pressTime = pressTime + 1
 		end
 
-		if pressLeft ~= nil and (pressLeft + 500) < GetGameTimer() and pressTime > 0 and pressTime < 3 then
+		if pressLeft ~= nil and (pressLeft + 500) < GetGameTimer() and pressTime > 0 and pressTime < 1 then
 			pressTime = 0
 		end
 
-		if pressTime == 3 then
+		if pressTime == 1 then
 			if recentlySpawned <= 0 then
 				recentlySpawned = 10
 				TriggerServerEvent('elrp:loadhorse')
@@ -188,17 +217,20 @@ end)
 -- | Spawn Horse | --
 
 RegisterNetEvent( 'elrp:spawnHorse' )
-AddEventHandler( 'elrp:spawnHorse', function ( horse )
+AddEventHandler( 'elrp:spawnHorse', function ( horse, isInShop )
 
 	local player = PlayerPedId()
 
 	local model = GetHashKey( horse )
-	local x,y,z = table.unpack( GetOffsetFromEntityInWorldCoords( player, 0.0, 4.0, 0.5 ) )
+	local x, y, z, heading, a, b
 
-	local heading = GetEntityHeading( player ) + 90
+	if isInShop then
+		x, y, z, heading = -373.302, 786.904, 116.169, 273.18
+	else
+		x, y, z = table.unpack( GetOffsetFromEntityInWorldCoords( player, 0.0, -100.0, 0.3 ) )
+		a, b = GetGroundZAndNormalFor_3dCoord( x, y, z + 10 )
+	end
 
-	local oldIdOfTheHorse = idOfTheHorse
-	
 	local idOfTheHorse = NumberHorseSpawn + 1
 
 	RequestModel( model )
@@ -207,19 +239,79 @@ AddEventHandler( 'elrp:spawnHorse', function ( horse )
 		Wait(500)
 	end
 
-	if ( horseSpawn[idOfTheHorse] ~= oldIdOfTheHorse ) then
-		DeleteEntity( horseSpawn[idOfTheHorse].model )
+	if horseSpawn[idOfTheHorse] == nil then
+
+		horseModel = CreatePed( model, x, y, z, heading, 1, 1 )
+
+		SET_PED_RELATIONSHIP_GROUP_HASH( horseModel, model )
+		SET_PED_DEFAULT_OUTFIT( horseModel )
+		SET_BLIP_TYPE( horseModel )
+		GiveAllAttitude( horseModel )
+
+		TaskGoToEntity( idOfTheHorse, player, -1, 7.2, 2.0, 0, 0 )
+
+		horseSpawn[idOfTheHorse] = { id = idOfTheHorse, model = horseModel }
+
 	end
 
-	horseModel = CreatePed( model, x, y, z, heading, 1, 1 )
+	if horseSpawn[idOfTheHorse] then
 
-	SET_PED_RELATIONSHIP_GROUP_HASH( horseModel, model )
-	SET_PED_DEFAULT_OUTFIT( horseModel )
-	Citizen.InvokeNative(0x23f74c2fda6e7c61, -1230993421, horseModel)
-	
-	horseSpawn[idOfTheHorse] = { id = idOfTheHorse, model = horseModel }
+		if isInShop then
+
+			local x, y, z, w = table.unpack( Config.SpawnHorse[CurrentZoneActive] )
+
+			DeleteEntity(horseSpawn[idOfTheHorse].model)
+
+			horseSpawn[idOfTheHorse].model = CreatePed( model, x, y, z, w, 1, 1 )
+			horseSpawn[idOfTheHorse].id = idOfTheHorse
+
+			SET_PED_RELATIONSHIP_GROUP_HASH( horseSpawn[idOfTheHorse].model, model )
+			SET_PED_DEFAULT_OUTFIT( horseSpawn[idOfTheHorse].model )
+			SET_BLIP_TYPE( horseSpawn[idOfTheHorse].model )
+			GiveAllAttitude( horseSpawn[idOfTheHorse].model )
+
+		else
+
+			local EntityIsDead = IsEntityDead( horseSpawn[idOfTheHorse].model )
+
+			if EntityIsDead then
+
+				ShowNotification( "I treated your horse he wasn't well..." )
+
+				horseSpawn[idOfTheHorse].model = CreatePed( model, x, y, b, heading, 1, 1 )
+				horseSpawn[idOfTheHorse].id = idOfTheHorse
+
+			end
+
+			local EntityPedCoord = GetEntityCoords( player )
+			local EntityHorseCoord = GetEntityCoords( horseSpawn[idOfTheHorse].model )
+
+			if #( EntityPedCoord - EntityHorseCoord ) > 100.0 then
+
+				DeleteEntity(horseSpawn[idOfTheHorse].model)
+
+				horseSpawn[idOfTheHorse].model = CreatePed( model, x, y, b, heading, 1, 1 )
+				horseSpawn[idOfTheHorse].id = idOfTheHorse
+
+				SET_PED_RELATIONSHIP_GROUP_HASH( horseSpawn[idOfTheHorse].model, model )
+				SET_PED_DEFAULT_OUTFIT( horseSpawn[idOfTheHorse].model )
+				SET_BLIP_TYPE( horseSpawn[idOfTheHorse].model )
+
+				GiveAllAttitude( horseSpawn[idOfTheHorse].model )
+
+			end
+
+			TaskGoToEntity( horseSpawn[idOfTheHorse].model, player, -1, 7.2, 2.0, 0, 0 )
+
+		end
+
+	end
 
 end )
+
+function SET_BLIP_TYPE ( animal )
+	return Citizen.InvokeNative(0x23f74c2fda6e7c61, -1230993421, animal)
+end
 
 function SET_ANIMAL_TUNING_BOOL_PARAM ( animal, p1, p2 )
 	return Citizen.InvokeNative( 0x9FF1E042FA597187, animal, p1, p2 )

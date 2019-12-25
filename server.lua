@@ -1,3 +1,5 @@
+print( '\x1b[31m[ELRP_HorseDealer]\x1b[0m : ' .. Config.Version )
+
 local function GetAmmoutHorses( Player_ID, Character_ID )
     local HasHorses = MySQL.Sync.fetchAll( "SELECT * FROM horses WHERE identifier = @identifier AND charid = @charid ", {
         ['identifier'] = Player_ID,
@@ -14,6 +16,7 @@ AddEventHandler( 'elrp:buyhorse', function ( args )
     local _price = args['Price']
     local _level = args['Level']
     local _model = args['Model']
+
 
 	TriggerEvent('redemrp:getPlayerFromId', _src, function(user)
         u_identifier = user.getIdentifier()
@@ -38,7 +41,7 @@ AddEventHandler( 'elrp:buyhorse', function ( args )
         user.removeMoney(_price)
     end)
 
-    TriggerClientEvent('elrp:spawnHorse', _src, _model)
+    TriggerClientEvent('elrp:spawnHorse', _src, _model, true)
 
 
     if _resul ~= true then
@@ -68,7 +71,8 @@ AddEventHandler( 'elrp:loadhorse', function ( )
 
     if HasHorses[1] then
         local horse = HasHorses[1].horse
-        TriggerClientEvent("elrp:spawnHorse", _src, horse)
+        print(horse)
+        TriggerClientEvent("elrp:spawnHorse", _src, horse, false)
     end
 
 end )
