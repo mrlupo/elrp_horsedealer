@@ -29,4 +29,4 @@ Usage :
 
 2. Call horse by pressing (H).
 
-3. If horse is to far press H (3 times) to reset call event.
+3. If horse is to far press H (1 time) to reset call event.
