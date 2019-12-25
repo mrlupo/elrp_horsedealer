@@ -2,6 +2,13 @@ HORSE SHOP FOR REDEM 0.1v by #mrlupo# / #Proky# / #Plouffe#
 https://github.com/Proky0
 https://github.com/mrlupo
 
+Update : 0.2v 
+1 - added spawn points for horse
+2 - added call horse with H and he will follow/run to you
+3 - added cleaner menu
+4 - fixed some code
+
+
 Info :
 This script will add a horse you buy into a database and when you buy a new horse it will update and replace the old one.
 
