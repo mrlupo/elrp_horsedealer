@@ -76,7 +76,7 @@ local Horses = {
 
 local function CreateBlips ( )
 	for k,v in pairs(Config.Coords) do
-		local blip = Citizen.InvokeNative( 0x554d9d53f696d002, -515518185, v.x, v.y, v.z)
+		local blip = Citizen.InvokeNative( 0x554d9d53f696d002, 564457427, v.x, v.y, v.z)
 	end
 end
 
@@ -101,6 +101,14 @@ local function GiveAllAttitude( entity )
     Citizen.InvokeNative( 0xF6A7C08DF2E28B28, entity, 0, 5000.0, false )
     Citizen.InvokeNative( 0xF6A7C08DF2E28B28, entity, 1, 5000.0, false )
     Citizen.InvokeNative( 0xF6A7C08DF2E28B28, entity, 2, 5000.0, false )
+	-- accs
+	Citizen.InvokeNative(0xD3A7B003ED343FD9, entity,0x20359E53,true,true,true) --saddle
+    Citizen.InvokeNative(0xD3A7B003ED343FD9, entity,0x508B80B9,true,true,true) --blanket
+   -- Citizen.InvokeNative(0xD3A7B003ED343FD9, entity,0x16923E26,true,true,true) --mane
+    --Citizen.InvokeNative(0xD3A7B003ED343FD9, entity,0xF867D611,true,true,true) --tail
+    Citizen.InvokeNative(0xD3A7B003ED343FD9, entity,0xF0C30271,true,true,true) --bag
+    Citizen.InvokeNative(0xD3A7B003ED343FD9, entity,0x12F0DF9F,true,true,true) --bedroll
+    Citizen.InvokeNative(0xD3A7B003ED343FD9, entity,0x67AF7302,true,true,true) --stirups
 end
 
 local function IsNearZone ( location )
@@ -167,7 +175,7 @@ Citizen.CreateThread(function()
 
 		if IsZone then
 			DisplayHelp(Config.Shoptext, 0.50, 0.95, 0.6, 0.6, true, 255, 255, 255, 255, true, 10000)
-			if IsControlJustReleased(0, keys['E']) then
+			if IsControlJustReleased(0, keys['G']) then
 				WarMenu.OpenMenu('id_Horse')
 				CurrentZoneActive = IdZone
 			end
@@ -269,14 +277,15 @@ AddEventHandler( 'elrp:spawnHorse', function ( horse, isInShop )
 			SET_PED_DEFAULT_OUTFIT( horseSpawn[idOfTheHorse].model )
 			SET_BLIP_TYPE( horseSpawn[idOfTheHorse].model )
 			GiveAllAttitude( horseSpawn[idOfTheHorse].model )
-
+			
+			
 		else
 
 			local EntityIsDead = IsEntityDead( horseSpawn[idOfTheHorse].model )
 
 			if EntityIsDead then
 
-				ShowNotification( "I treated your horse he wasn't well..." )
+				ShowNotification( " your horse is being treated he wasn't well..." )
 
 				horseSpawn[idOfTheHorse].model = CreatePed( model, x, y, b, heading, 1, 1 )
 				horseSpawn[idOfTheHorse].id = idOfTheHorse
@@ -298,7 +307,8 @@ AddEventHandler( 'elrp:spawnHorse', function ( horse, isInShop )
 				SET_BLIP_TYPE( horseSpawn[idOfTheHorse].model )
 
 				GiveAllAttitude( horseSpawn[idOfTheHorse].model )
-
+				
+		
 			end
 
 			TaskGoToEntity( horseSpawn[idOfTheHorse].model, player, -1, 7.2, 2.0, 0, 0 )
