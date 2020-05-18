@@ -1,7 +1,7 @@
 Config = {}
 
 Config.NoMoney = 'Do not have enough money $'
-Config.Shoptext = 'Press (E) for action with horse shop'
+Config.Shoptext = 'Press (G) for action with horse shop'
 Config.LevelMissing = 'You do not have enough expirience'
 
 Config.Coords = {
@@ -20,4 +20,4 @@ Config.SpawnHorse = {
     vector4( 2967.735, 1431.232, 44.753, 215.782 ),
 }
 
-Config.Version = 0.02 -- You can remove it if you like :D
+Config.Version = 0.5 
