@@ -336,7 +336,7 @@ function SET_PED_RELATIONSHIP_GROUP_HASH ( iVar0, iParam0 )
 end
 
 function _GET_DEFAULT_RELATIONSHIP_GROUP_HASH ( iParam0 )
-	return Citizen.InvokeNative( 0xC80A74AC829DDD92, iParam0 );
+	return Citizen.InvokeNative( 0x3CC4A718C258BDD0, iParam0 );
 end
 
 -- | Timer | --
